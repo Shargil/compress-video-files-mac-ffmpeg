@@ -69,7 +69,7 @@ echo " "
 echo "----------------------------------------------------------------------------------------"
 echo "Check there are the same amount of files in the Originals folder as the compressed files"
 echo "Check some random videos to see it's all good!"
-echo "Only after checking all is good, you can DELETE Originals..."
+echo "Only after checking all is good, you can DELETE Originals... "
 echo "----------------------------------------------------------------------------------------"
 
 
