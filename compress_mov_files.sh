@@ -24,7 +24,7 @@ while [[ $user_input != Start ]] ; do
     if [[ $user_input != Start ]]
     then 
         fix_drag_and_drop_to_tar_adds_backslashes
-        
+
         # Replace ".mov" with ".MOV" for the delimeter to work
         user_input=${user_input//.mov/.MOV}
 
