@@ -13,7 +13,7 @@
 **➕ Preserve some Metadata and time modified!**
 
 <br/><br/>
-> ⚠️ This is my first shell script, use it with caution
+> ⚠️ This is my first (and messy) shell script, use it with caution
 
 
 https://user-images.githubusercontent.com/36592809/212783589-f097c0ee-759d-40d0-ba79-03b59cda6c4f.mp4
