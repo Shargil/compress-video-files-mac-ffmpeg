@@ -35,9 +35,9 @@ do
     # Remove a leading space, if present
     path=${path# }
 
-    echo "---------------------------------------------------------------------------------------------------------------------------"
+    echo "--------------------------------------------------------------------------------"
     echo "$path"
-    echo "---------------------------------------------------------------------------------------------------------------------------"
+    echo "--------------------------------------------------------------------------------"
 
     # If the file ends with .MOV 
     if [[ .MOV == "${path:0-4}" ]]
@@ -45,12 +45,14 @@ do
         # Compress file to the same path
 
         # -movflags use_metadata_tags = copy all metadata 
+        # -loglevel warning           = Remove crazy amounts of prints to terminal, so it's viable to go thourgh it later and check for erros
+        # -hide_banner                = Suppress printing copyright notice, build options and library versions
         # libx265                     = new better verstion of h264
+        # -crf 24                     = reasonable range for H.265 may be 24 to 30. Note that lower CRF values correspond to higher bitrates, and hence produce higher quality videos.
         # -tag:v hvc1                 = fix a tagging problem blocking QuickTime from opeing the video
         # "${path%.*}"                = remove everything after and including the final "."
-        # -crf 24                     = reasonable range for H.265 may be 24 to 30. Note that lower CRF values correspond to higher bitrates, and hence produce higher quality videos.
-        ffmpeg -i "$path" -movflags use_metadata_tags -vcodec libx265 -crf 24 -tag:v hvc1 "${path%.*}"_compressed.mp4
-        
+        ffmpeg -i "$path" -movflags use_metadata_tags -loglevel warning -hide_banner -vcodec libx265 -crf 24 -tag:v hvc1 "${path%.*}"_compressed.mp4
+
         #  Copy the timestamp of the original file to the new one
         touch -r "$path" "${path%.*}"_compressed.mp4
 
@@ -65,12 +67,11 @@ do
     fi
 done
 
-echo " "
-echo "----------------------------------------------------------------------------------------"
+echo "---------------------------------- Done! ---------------------------------------"
 echo "Check there are the same amount of files in the Originals folder as the compressed files"
 echo "Check some random videos to see it's all good!"
 echo "Only after checking all is good, you can DELETE Originals... "
-echo "----------------------------------------------------------------------------------------"
+echo "--------------------------------------------------------------------------------"
 
 
 # -------- pseudo code --------
