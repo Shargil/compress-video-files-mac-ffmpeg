@@ -3,15 +3,31 @@
 # I put ffmpeg for mac statc build in Applications
 export PATH=$PATH:/Applications
 
+fix_drag_and_drop_to_tar_adds_backslashes()
+{
+    # ${var//oldstring/newstring}
+    # Replace "\ " with " " in the string (when we drag and drop a file to the terminal the spaces in the path become "\ ". Let's reverse that)
+    user_input=${user_input//\\ / }
+    # Replace "\," with "," in the string (when we drag and drop a file to the terminal the commas in the path become "\,". Let's reverse that)
+    user_input=${user_input//\\,/,}
+    # Replace \' with ' in the string (when we drag and drop a file to the terminal the single quats (or double) in the path become \' Let's reverse that)
+    user_input=${user_input//\\\'/\'}
+
+    # other chats it can happen with: $,(,),[,],{,},!,<,>,&,',",;,*,?,#,%,|,~,\,/,\
+}
+
 user_inputs=""
 user_input=""
 while [[ $user_input != Start ]] ; do
     echo "Drag and drop .MOV video files for compression, when finished type Start"
     read -r user_input
     if [[ $user_input != Start ]]
-    then
-        # Replace "\ " with " " in the string (when we drag and drop a file to the terminal the spaces in the path become "\ ". Let's reverse that)
-        user_input=${user_input//\\ / }
+    then 
+        fix_drag_and_drop_to_tar_adds_backslashes
+        
+        # Replace ".mov" with ".MOV" for the delimeter to work
+        user_input=${user_input//.mov/.MOV}
+
         user_inputs+=$user_input
     fi
 done
