@@ -19,7 +19,7 @@ fix_drag_and_drop_adds_backslashes()
 user_inputs=""
 user_input=""
 # Check also .AVI .avi .mpg .mpeg .m4v 
-supported_files=(".mov" ".MOV" ".mp4" ".MP4")
+supported_files=(".mov" ".MOV" ".mp4" ".MP4" ".AVI" ".avi" ".mpg" ".mpeg" ".m4v")
 
 # Get all files!
 echo "Drag and drop video files (${supported_files[*]}) for compression, when finished type Start"
