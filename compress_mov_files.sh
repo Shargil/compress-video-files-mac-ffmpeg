@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# I put ffmpeg for mac statc build in Applications
+# I placed ffmpeg for mac static build in Applications
 export PATH=$PATH:/Applications
 
-fix_drag_and_drop_to_tar_adds_backslashes()
+fix_drag_and_drop_adds_backslashes()
 {
     # ${var//oldstring/newstring}
     # Replace "\ " with " " in the string (when we drag and drop a file to the terminal the spaces in the path become "\ ". Let's reverse that)
@@ -13,40 +13,41 @@ fix_drag_and_drop_to_tar_adds_backslashes()
     # Replace \' with ' in the string (when we drag and drop a file to the terminal the single quats (or double) in the path become \' Let's reverse that)
     user_input=${user_input//\\\'/\'}
 
-    # other chats it can happen with: $,(,),[,],{,},!,<,>,&,',",;,*,?,#,%,|,~,\,/,\
+    # Other chars it can happen with: $,(,),[,],{,},!,<,>,&,',",;,*,?,#,%,|,~,\,/,\
 }
 
 user_inputs=""
 user_input=""
+# Check also .AVI .avi .mpg .mpeg .m4v 
+supported_files=(".mov" ".MOV" ".mp4" ".MP4")
+
+# Get all files!
+echo "Drag and drop video files (${supported_files[*]}) for compression, when finished type Start"
+read -r user_input
 while [[ $user_input != Start ]] ; do
-    echo "Drag and drop .MOV video files for compression, when finished type Start"
+    
+    fix_drag_and_drop_adds_backslashes
+
+    user_inputs+=$user_input
+
+    echo "Drag and drop video files (${supported_files[*]}) for compression, when finished type Start"
     read -r user_input
-    if [[ $user_input != Start ]]
-    then 
-        fix_drag_and_drop_to_tar_adds_backslashes
-
-        # Replace ".mov" with ".MOV" for the delimeter to work
-        user_input=${user_input//.mov/.MOV}
-
-        user_inputs+=$user_input
-    fi
 done
 
-# Separte long str into separate pathes array
-# https://www.javatpoint.com/bash-split-string#:~:text=Example%202%3A%20Bash-,Split%20String%20by%20another%20string,-In%20this%20example
-delimiter=".MOV" 
-s=$user_inputs
-pathes_array=();  
-while [[ $s ]];  
-do  
-    pathes_array+=( "${s%%"$delimiter"*}" );  
-    s=${s#*"$delimiter"};  
-done;  
+# Add to the specified file type a * character, so we can separte it into array of pathes
+for ((i = 0; i < ${#supported_files[@]}; i++))
+do
+    file_type=${supported_files[$i]}
+    user_inputs="${user_inputs//$file_type/$file_type*}"
+done
+
+# Separate the string into an array using the * character
+IFS=$'*' read -ra pathes_array <<< "$user_inputs"
 
 # Compress all files!
 for ((i = 0; i < ${#pathes_array[@]}; i++))
 do
-    path=${pathes_array[$i]}.MOV
+    path=${pathes_array[$i]}
 
     # Remove a leading space, if present
     path=${path# }
@@ -55,32 +56,25 @@ do
     echo "$path"
     echo "--------------------------------------------------------------------------------"
 
-    # If the file ends with .MOV 
-    if [[ .MOV == "${path:0-4}" ]]
-    then
-        # Compress file to the same path
+    # Compress file to the same path
 
-        # -movflags use_metadata_tags = copy all metadata 
-        # -loglevel warning           = Remove crazy amounts of prints to terminal, so it's viable to go thourgh it later and check for erros
-        # -hide_banner                = Suppress printing copyright notice, build options and library versions
-        # libx265                     = new better verstion of h264
-        # -crf 24                     = reasonable range for H.265 may be 24 to 30. Note that lower CRF values correspond to higher bitrates, and hence produce higher quality videos.
-        # -tag:v hvc1                 = fix a tagging problem blocking QuickTime from opeing the video
-        # "${path%.*}"                = remove everything after and including the final "."
-        ffmpeg -i "$path" -movflags use_metadata_tags -loglevel warning -hide_banner -vcodec libx265 -crf 24 -tag:v hvc1 "${path%.*}"_compressed.mp4
+    # -movflags use_metadata_tags = copy all metadata 
+    # -loglevel warning           = Remove crazy amounts of prints to terminal, so it's viable to go thourgh it later and check for erros
+    # -hide_banner                = Suppress printing copyright notice, build options and library versions
+    # libx265                     = new better verstion of h264
+    # -crf 24                     = reasonable range for H.265 may be 24 to 30. Note that lower CRF values correspond to higher bitrates, and hence produce higher quality videos.
+    # -tag:v hvc1                 = fix a tagging problem blocking QuickTime from opeing the video
+    # "${path%.*}"                = remove everything after and including the final "."
+    ffmpeg -i "$path" -movflags use_metadata_tags -loglevel warning -hide_banner -vcodec libx265 -crf 24 -tag:v hvc1 "${path%.*}"_compressed.mp4
 
-        #  Copy the timestamp of the original file to the new one
-        touch -r "$path" "${path%.*}"_compressed.mp4
+    #  Copy the timestamp of the original file to the new one
+    touch -r "$path" "${path%.*}"_compressed.mp4
 
-        # Create the originals folder if doesn't exsit all ready
-        mkdir -p -- "${path%/*}/Original Files - DELETE if all went OK"
-        
-        # Move original file to folder "Original Files - DELETE if all went OK"
-        mv -v "$path"  "${path%/*}/Original Files - DELETE if all went OK"
-
-    else
-	    echo "Is this this the right file? No .MOV file extention : $path" 
-    fi
+    # Create the originals folder if doesn't exsit all ready
+    mkdir -p -- "${path%/*}/Original Files - DELETE if all went OK"
+    
+    # Move original file to folder "Original Files - DELETE if all went OK"
+    mv -v "$path"  "${path%/*}/Original Files - DELETE if all went OK"
 done
 
 echo "---------------------------------- Done! ---------------------------------------"
@@ -90,7 +84,7 @@ echo "Only after checking all is good, you can DELETE Originals... "
 echo "--------------------------------------------------------------------------------"
 
 
-# -------- pseudo code --------
+# -------- Pseudo Code --------
 # loop thourgh inputs
     # drag and drop all videos you want to compress
     # add it to list/ dict
