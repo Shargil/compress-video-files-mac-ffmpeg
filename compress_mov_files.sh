@@ -11,7 +11,7 @@ fix_drag_and_drop_adds_backslashes()
     for ((i = 0; i < ${#chars_that_gets_backslash_when_dropped[@]}; i++))
     do
         special_char=${chars_that_gets_backslash_when_dropped[$i]}
-    # ${var//oldstring/newstring}
+        # ${var//oldstring/newstring}
         user_input=${user_input//\\$special_char/$special_char}
     done
 }
@@ -58,7 +58,7 @@ do
 
     # Compress file to the same path
 
-    # -movflags use_metadata_tags = copy all metadata 
+    # -movflags use_metadata_tags = copy some metadata 
     # -loglevel warning           = Remove crazy amounts of prints to terminal, so it's viable to go thourgh it later and check for erros
     # -hide_banner                = Suppress printing copyright notice, build options and library versions
     # libx265                     = new better verstion of h264
@@ -67,8 +67,8 @@ do
     # "${path%.*}"                = remove everything after and including the final "."
     ffmpeg -i "$path" -movflags use_metadata_tags -loglevel warning -hide_banner -vcodec libx265 -crf 24 -tag:v hvc1 "${path%.*}"_compressed.mp4
 
-    #  Copy the timestamp of the original file to the new one
-    touch -r "$path" "${path%.*}"_compressed.mp4
+    #  Copy all meta data (like it's the same file!). Including create date (important for files with no "media created date" and with "date modified" that not showing creation date any more [which is valid])
+    exiftool -TagsFromFile "$path" -All:All -overwrite_original "${path%.*}"_compressed.mp4
 
     # Create the originals folder if doesn't exsit all ready
     mkdir -p -- "${path%/*}/Original Files - DELETE if all went OK"
