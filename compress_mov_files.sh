@@ -5,21 +5,21 @@ export PATH=$PATH:/Applications
 
 fix_drag_and_drop_adds_backslashes()
 {
-    # ${var//oldstring/newstring}
-    # Replace "\ " with " " in the string (when we drag and drop a file to the terminal the spaces in the path become "\ ". Let's reverse that)
-    user_input=${user_input//\\ / }
-    # Replace "\," with "," in the string (when we drag and drop a file to the terminal the commas in the path become "\,". Let's reverse that)
-    user_input=${user_input//\\,/,}
-    # Replace \' with ' in the string (when we drag and drop a file to the terminal the single quats (or double) in the path become \' Let's reverse that)
-    user_input=${user_input//\\\'/\'}
+    # Example: replace "\ " with " " in the string (when we drag and drop a file to the terminal the spaces in the path become "\ ". Let's reverse that)
+    chars_that_gets_backslash_when_dropped=(" " "," "'" "$" "(" ")" "[" "]" "{" "}" "!" "<" ">" "&" "\"" ";" "*" "?" "#" "%" "|" "~")
 
-    # Other chars it can happen with: $,(,),[,],{,},!,<,>,&,',",;,*,?,#,%,|,~,\,/,\
+    for ((i = 0; i < ${#chars_that_gets_backslash_when_dropped[@]}; i++))
+    do
+        special_char=${chars_that_gets_backslash_when_dropped[$i]}
+    # ${var//oldstring/newstring}
+        user_input=${user_input//\\$special_char/$special_char}
+    done
 }
 
 user_inputs=""
 user_input=""
 # Check also .AVI .avi .mpg .mpeg .m4v 
-supported_files=(".mov" ".MOV" ".mp4" ".MP4" ".AVI" ".avi" ".mpg" ".mpeg" ".m4v")
+supported_files=(".mov" ".MOV" ".mp4" ".MP4" ".AVI" ".avi" ".mpg" ".mpeg" ".m4v" ".wmv")
 
 # Get all files!
 echo "Drag and drop video files (${supported_files[*]}) for compression, when finished type Start"
