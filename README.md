@@ -13,7 +13,7 @@
 7. Delete the "Original Files - DELETE if all went OK" folder. 
 
 <br/><br/>
-**✅ Preserve Metadata and Date modified!**
+**✅ Preserves Metadata and Date modified!**
 
 **⚠️ This is my first (and messy) shell script, use it with caution**
 
