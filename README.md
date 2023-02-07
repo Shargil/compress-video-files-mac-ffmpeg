@@ -2,7 +2,9 @@
 **Tired of 4GB .MOV video files clogging up your Mac's expensive SSD storage?**
 
 1. Clone/ download this repo.
-![Screenshot 2023-02-08 at 0 33 53](https://user-images.githubusercontent.com/36592809/217382559-a3a8e6aa-a3a0-40f7-82c4-8c6a889848a0.png)
+
+![Screenshot 2023-02-08 at 0 33 53](https://user-images.githubusercontent.com/36592809/217382857-1865d01d-fe3f-49d2-a449-75be2d60e25a.png)
+
 2. Download [ffmpeg](https://ffmpeg.org/download.html#build-mac) and [exiftool](https://exiftool.org/) for mac
 3. Run this script in the Terminal:
 
