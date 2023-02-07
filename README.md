@@ -3,7 +3,7 @@
 
 1. Clone/ download this repo.
 
-![Screenshot 2023-02-08 at 0 33 53](https://user-images.githubusercontent.com/36592809/217382857-1865d01d-fe3f-49d2-a449-75be2d60e25a.png)
+![Screenshot 2023-02-08 at 0 33 1](https://user-images.githubusercontent.com/36592809/217383591-d3a7cddf-2731-466a-b520-3904fe17a76c.png)
 
 2. Download [ffmpeg](https://ffmpeg.org/download.html#build-mac) and [exiftool](https://exiftool.org/) for mac
 3. Run this script in the Terminal:
