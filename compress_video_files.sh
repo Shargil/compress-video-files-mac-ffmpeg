@@ -67,8 +67,11 @@ do
     # "${path%.*}"                = remove everything after and including the final "."
     ffmpeg -i "$path" -movflags use_metadata_tags -loglevel warning -hide_banner -vcodec libx265 -crf 24 -tag:v hvc1 "${path%.*}"_compressed.mp4
 
-    #  Copy all meta data (like it's the same file!). Including create date (important for files with no "media created date" and with "date modified" that not showing creation date any more [which is valid])
+    # Copy most meta data. Including create date (important for files with no "media created date" and with "date modified" that not showing creation date any more [which is valid])
     exiftool -TagsFromFile "$path" -All:All -overwrite_original "${path%.*}"_compressed.mp4
+
+    # Copy the File Modification Date/Time from original file (Finder in macos uses "Date Modified" as one of his main columns as default)
+    touch -r "$path" "${path%.*}"_compressed.mp4
 
     # Create the originals folder if doesn't exsit all ready
     mkdir -p -- "${path%/*}/Original Files - DELETE if all went OK"
