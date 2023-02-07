@@ -3,7 +3,7 @@
 <br/><br/>
 
 1. Clone/ download this repo (see the video below for how to do it).
-2. Download [ffmpeg](https://ffmpeg.org/download.html#build-mac) and [exiftool](https://exiftool.org/) for mac
+2. Download [FFmpeg](https://ffmpeg.org/download.html#build-mac) and [ExifTool](https://exiftool.org/) for mac
 3. Run this script in the Terminal:
 
         bash path/compress_video_files.sh
