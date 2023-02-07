@@ -1,5 +1,6 @@
 # compress-mov-files-mac-ffmpeg
 **Tired of 4GB .MOV video files clogging up your Mac's expensive SSD storage?**
+<br/><br/>
 
 1. Clone/ download this repo.
 
