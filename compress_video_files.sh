@@ -1,5 +1,11 @@
 #!/bin/bash
 
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
 # I placed ffmpeg for mac static build in Applications
 export PATH=$PATH:/Applications
 
@@ -44,6 +50,10 @@ done
 # Separate the string into an array using the * character
 IFS=$'*' read -ra pathes_array <<< "$user_inputs"
 
+
+original_size=0
+new_size=0
+files_with_ffmpeg_errors=()
 # Compress all files!
 for ((i = 0; i < ${#pathes_array[@]}; i++))
 do
@@ -67,23 +77,48 @@ do
     # "${path%.*}"                = remove everything after and including the final "."
     ffmpeg -i "$path" -movflags use_metadata_tags -loglevel warning -hide_banner -vcodec libx265 -crf 24 -tag:v hvc1 "${path%.*}"_compressed.mp4
 
-    # Copy most meta data. Including create date (important for files with no "media created date" and with "date modified" that not showing creation date any more [which is valid])
-    exiftool -TagsFromFile "$path" -All:All -overwrite_original "${path%.*}"_compressed.mp4
+    # Check if ffmpeg ran successfully by checking its exit code
+    if [ $? -ne 0 ]; then
+        files_with_ffmpeg_errors+=($path)
+    else 
+        # Copy most meta data. Including create date (important for files with no "media created date" and with "date modified" that not showing creation date any more [which is valid])
+        exiftool -TagsFromFile "$path" -All:All -overwrite_original "${path%.*}"_compressed.mp4
 
-    # Copy the File Modification Date/Time from original file (Finder in macos uses "Date Modified" as one of his main columns as default)
-    touch -r "$path" "${path%.*}"_compressed.mp4
+        # Copy the File Modification Date/Time from original file (Finder in macos uses "Date Modified" as one of his main columns as default)
+        touch -r "$path" "${path%.*}"_compressed.mp4
 
-    # Create the originals folder if doesn't exsit all ready
-    mkdir -p -- "${path%/*}/Original Files - DELETE if all went OK"
-    
-    # Move original file to folder "Original Files - DELETE if all went OK"
-    mv -v "$path"  "${path%/*}/Original Files - DELETE if all went OK"
+        # Count the original and the new files sizes to show in the end!
+        original_size=$((original_size + $(wc -c < "$path")))
+        new_size=$((new_size + $(wc -c < "${path%.*}"_compressed.mp4)))
+
+        # Create the originals folder if doesn't exsit all ready
+        mkdir -p -- "${path%/*}/Original Files - DELETE if all went OK"
+        
+        # Move original file to folder "Original Files - DELETE if all went OK"
+        mv -v "$path"  "${path%/*}/Original Files - DELETE if all went OK"
+    fi
 done
 
+# Error summary
+if [ ${#files_with_ffmpeg_errors[@]} -ne 0 ]; then
+    echo "---------------------------------- Errors! ---------------------------------------"
+    echo " There are ${#files_with_ffmpeg_errors[@]} errors"
+    echo " In the following files: "
+        for i in "${files_with_ffmpeg_errors[@]}"; do
+            echo -e "       ${RED} Error with: $i ${NC}"
+        done
+fi
+
+# Summary
+original_size_GB=$(echo "scale=2; $original_size / (1024*1024*1024)" | bc)
+new_size_GB=$(echo "scale=10; $new_size / (1024*1024*1024)" | bc)
 echo "---------------------------------- Done! ---------------------------------------"
-echo "Check there are the same amount of files in the Originals folder as the compressed files"
-echo "Check some random videos to see it's all good!"
-echo "Only after checking all is good, you can DELETE Originals... "
+echo -e "${GREEN} Original files size: $original_size_GB GB | New files size: $new_size_GB GB${NC}"
+echo "                                                                                "
+echo " Check all went well before you DELETE originals folder: "
+echo "  1. Check some random videos to see if they look good"
+echo "  2. Check there are the same amount of files in the Originals folder as the compressed files"
+echo "  3. Scroll through the terminal to check for any colorful errors "
 echo "--------------------------------------------------------------------------------"
 
 
