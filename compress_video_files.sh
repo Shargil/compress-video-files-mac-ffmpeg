@@ -110,8 +110,8 @@ if [ ${#files_with_ffmpeg_errors[@]} -ne 0 ]; then
 fi
 
 # Summary
-original_size_GB=$(echo "scale=2; $bytes / 1000000000" | bc) # It matches Mac's finder size info better then 1024^3
-new_size_GB=$(echo "scale=10; $new_size / 1000000000" | bc)
+original_size_GB=$(echo "scale=2; $original_size / 1000000000" | bc) # It matches Mac's finder size info better then 1024^3
+new_size_GB=$(echo "scale=2; $new_size / 1000000000" | bc)
 echo "---------------------------------- Done! ---------------------------------------"
 echo -e "${GREEN} Original files size: $original_size_GB GB | New files size: $new_size_GB GB${NC}"
 echo "                                                                                "
