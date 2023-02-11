@@ -17,6 +17,7 @@ fix_drag_and_drop_adds_backslashes()
     for ((i = 0; i < ${#chars_that_gets_backslash_when_dropped[@]}; i++))
     do
         special_char=${chars_that_gets_backslash_when_dropped[$i]}
+        # Remove backlash added before special_char 
         # ${var//oldstring/newstring}
         user_input=${user_input//\\$special_char/$special_char}
     done
@@ -24,7 +25,6 @@ fix_drag_and_drop_adds_backslashes()
 
 user_inputs=""
 user_input=""
-# Check also .AVI .avi .mpg .mpeg .m4v 
 supported_files=(".mov" ".MOV" ".mp4" ".MP4" ".AVI" ".avi" ".mpg" ".mpeg" ".m4v" ".wmv")
 
 # Get all files!
@@ -62,7 +62,7 @@ do
     # Remove a leading space, if present
     path=${path# }
 
-    echo "------------------------------------- $((i + 1))\\${#pathes_array[@]} -------------------------------------"
+    echo "------------------------------------- $((i + 1))/${#pathes_array[@]} -------------------------------------"
     echo "$path"
     echo "--------------------------------------------------------------------------------"
 
@@ -112,8 +112,10 @@ fi
 # Summary
 original_size_GB=$(echo "scale=2; $original_size / 1000000000" | bc) # It matches Mac's finder size info better then 1024^3
 new_size_GB=$(echo "scale=2; $new_size / 1000000000" | bc)
+compress_ratio=$(echo "scale=2; $original_size / $new_size" | bc)
 echo "---------------------------------- Done! ---------------------------------------"
 echo -e "${GREEN} Original files size: $original_size_GB GB | New files size: $new_size_GB GB${NC}"
+echo -e "${GREEN} You made this files $compress_ratio times smaller! ${NC}"
 echo "                                                                                "
 echo " Check all went well before you DELETE originals folder: "
 echo "  1. Check some random videos to see if they look good"
